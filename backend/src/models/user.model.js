@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { defaultProfileImage } from '../constants.js';
 
 const userSchema = new mongoose.Schema(
     {
@@ -30,7 +31,7 @@ const userSchema = new mongoose.Schema(
         },
         avatar: {
             type: String,
-            default: "https://res.cloudinary.com/dc5doivto/image/upload/v1724850513/wopw0xs7nrcp7h5f7lie.jpg"
+            default: defaultProfileImage
         },
         friends: [
             {
@@ -59,7 +60,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = async function () {
-    jwt.sign(
+    return jwt.sign(
         {
             _id: this._id,
             email: this.email,
@@ -74,7 +75,7 @@ userSchema.methods.generateAccessToken = async function () {
 };
 
 userSchema.methods.generateRefreshToken = async function () {
-    jwt.sign(
+    return jwt.sign(
         {
             _id: this._id
         },
