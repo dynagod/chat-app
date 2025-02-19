@@ -1,32 +1,51 @@
-import { useEffect, useState } from "react";
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from 'react-router-dom';
+import { Layout } from './components';
+import { HomePage, LoginPage, ProfilePage, RegisterPage, SettingsPage } from './pages';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginAsync } from './features/authSlice';
+import { Loader } from 'lucide-react';
 
-function App() {
-  const [books, setBooks] = useState([]);
+
+const App = () => {
+  const { isAuthenticated, loading } = useSelector(state => state.auth);
+  const [isReady, setIsReady] = useState(false);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    console.log(isAuthenticated)
+    dispatch(loginAsync({ route: '/api/v1/users/get-current-user' }));
+  }, [dispatch]);
 
   useEffect(() => {
-    axios.get('/api/v1/users/register')
-    .then((response) => {
-      setBooks(response.data.data);
-      console.log(response.data.data);
-    });
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, []);
-
-  return (
-    <>
-      <div className='bg-zinc-900 min-h-screen text-white'>
-        <h1>CHAT APP</h1>
-        {
-          books.map((book) => (
-            <div key={book.id}>
-              <h1>{book.title}</h1>
-              <p>Genre: {book.genre}</p>
-            </div>
-          ))
-        }
+  
+  if (loading || !isAuthenticated) // here it could be error if isAuthenticated is false u can use isReady instead of isAuthenticated if it happens 
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+        {console.log(isAuthenticated)}
       </div>
-    </>
-  )
-}
+    );
 
-export default App
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route path='/' element={<Layout />}>
+        <Route path='' element={<HomePage />} />
+        <Route path='profile' element={isAuthenticated ? <ProfilePage /> : <Navigate to='/login' />} />
+        <Route path='register' element={!isAuthenticated ? <RegisterPage /> : <Navigate to='/' />} />
+        <Route path='login' element={!isAuthenticated ? <LoginPage /> : <Navigate to='/' />} />
+        <Route path='settings' element={<SettingsPage />} />
+      </Route>
+    )
+  );
+
+  return <RouterProvider router={router} /> 
+};
+
+export default App;
