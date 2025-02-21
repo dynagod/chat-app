@@ -1,3 +1,5 @@
+import { defaultProfileImage } from "../constants.js";
+import { upload } from "../middlewares/multer.middleware.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -191,6 +193,10 @@ const refreshAccessToken = asyncHandler( async (req, res) => {
 
 });
 
+const getCurrentUser = asyncHandler( async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, req.user, "Current user fetched successfully"));
+});
+
 const changeCurrentPassword = asyncHandler( async (req, res) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
 
@@ -209,11 +215,7 @@ const changeCurrentPassword = asyncHandler( async (req, res) => {
 
 });
 
-const getCurrentUser = asyncHandler( async (req, res) => {
-  return res.status(200).json(new ApiResponse(200, req.user, "Current user fetched successfully"));
-});
-
-const updateProfile = asyncHandler( async (req, res) => {
+const changeCurrentProfilePic = asyncHandler( async (req, res) => {
   const avatarLocalPath = req.file ? req.file.path : undefined;
 
   const oldProfileImagePath = req.user.avatar;
@@ -226,7 +228,7 @@ const updateProfile = asyncHandler( async (req, res) => {
     req.user._id,
     {
       $set: {
-        avatar: avatar?.url
+        avatar: avatar ? avatar.url : defaultProfileImage
       }
     },
     {new: true}
@@ -240,12 +242,75 @@ const updateProfile = asyncHandler( async (req, res) => {
 
 });
 
+const changeCurrentFullName = asyncHandler( async (req, res) => {
+  const fullName = req.body.fullName;
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        fullName: fullName
+      }
+    },
+    {new: true}
+  ).select("-password -refreshToken");
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, user, "Full name updated successfuly"));
+});
+
+const changeCurentUsername = asyncHandler( async (req, res) => {
+  const username = req.body.username;
+
+  const existedUsername = await User.findOne({ username });
+  if (existedUsername) throw new ApiError(409, "Username already exists");
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        username: username
+      }
+    },
+    {new: true}
+  ).select("-password -refreshToken");
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, user, "Username updated successfuly"));
+});
+
+const updateProfile = asyncHandler( async (req, res) => {
+  const updateField = req.params['updateField'];
+
+  switch (updateField) {
+    case 'avatar':
+      upload.single('avatar')(req, res, async () => {
+        await changeCurrentProfilePic(req, res);
+      });
+      break;
+    
+    case 'password':
+      await changeCurrentPassword(req, res);
+      break;
+
+    case 'fullName':
+      await changeCurrentFullName(req, res);
+      break;
+
+    case 'username':
+      await changeCurentUsername(req, res);
+      break;
+  }
+
+});
+
 export {
   registerUser,
   loginUser,
   logOutUser,
   refreshAccessToken,
-  changeCurrentPassword,
   getCurrentUser,
   updateProfile
 };

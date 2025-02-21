@@ -15,6 +15,6 @@ userRouter.route('/login').post(loginUser);
 userRouter.route('/logout').post(verifyJWT, logOutUser);
 userRouter.route('/get-current-user').post(verifyJWT, getCurrentUser);
 userRouter.route('/refresh-token').post(refreshAccessToken);
-userRouter.route('/update-profile').put(verifyJWT, upload.single('avatar'), updateProfile);
+userRouter.route('/update-profile/:updateField').put(verifyJWT, updateProfile);
 
 export default userRouter;

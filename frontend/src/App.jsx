@@ -3,7 +3,7 @@ import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterP
 import { Layout } from './components';
 import { HomePage, LoginPage, ProfilePage, RegisterPage, SettingsPage } from './pages';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginAsync } from './features/authSlice';
+import { authenticateUser } from './features/authSlice';
 import { Loader } from 'lucide-react';
 
 
@@ -13,8 +13,7 @@ const App = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log(isAuthenticated)
-    dispatch(loginAsync({ route: '/api/v1/users/get-current-user' }));
+    if (!isAuthenticated) dispatch(authenticateUser({ route: '/api/v1/users/get-current-user' }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -25,11 +24,10 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  if (loading || !isAuthenticated) // here it could be error if isAuthenticated is false u can use isReady instead of isAuthenticated if it happens 
+  if (loading || !isReady) // here it could be error if isAuthenticated is false u can use isReady instead of isAuthenticated if it happens 
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />
-        {console.log(isAuthenticated)}
       </div>
     );
 

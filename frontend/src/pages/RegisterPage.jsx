@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Eye, EyeOff, Image, Loader2, Lock, Mail, MessageSquare, User } from 'lucide-react';
-import { loginAsync } from '../features/authSlice.js';
+import { authenticateUser } from '../features/authSlice.js';
 import toast from 'react-hot-toast';
 
 
@@ -37,7 +37,7 @@ const RegisterPage = () => {
 
     const succcess = validateForm();
 
-    if (succcess === true) dispatch(loginAsync({route: '/api/v1/users/register', userCredentials}));
+    if (succcess === true) dispatch(authenticateUser({route: '/api/v1/users/register', userCredentials}));
   };
 
   useEffect(() => {
