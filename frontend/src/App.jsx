@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from 'react-router-dom';
 import { Layout } from './components';
-import { HomePage, LoginPage, ProfilePage, RegisterPage, SettingsPage } from './pages';
+import { ChatPage, HomePage, LoginPage, ProfilePage, RegisterPage, SettingsPage } from './pages';
 import { useDispatch, useSelector } from 'react-redux';
 import { authenticateUser } from './features/authSlice';
 import { Loader } from 'lucide-react';
@@ -35,6 +35,7 @@ const App = () => {
     createRoutesFromElements(
       <Route path='/' element={<Layout />}>
         <Route path='' element={<HomePage />} />
+        <Route path='chat' element={isAuthenticated ? <ChatPage /> : <Navigate to='/login' />} />
         <Route path='profile' element={isAuthenticated ? <ProfilePage /> : <Navigate to='/login' />} />
         <Route path='register' element={!isAuthenticated ? <RegisterPage /> : <Navigate to='/' />} />
         <Route path='login' element={!isAuthenticated ? <LoginPage /> : <Navigate to='/' />} />
