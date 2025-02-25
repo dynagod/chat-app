@@ -18,12 +18,18 @@ app.use(cookieParser());
 
 // routes import
 import userRouter from './routes/user.routes.js';
-import chatRouter from './routes/chat.route.js';
+import chatRouter from './routes/chat.routes.js';
+import friendshipRouter from './routes/friendship.routes.js';
+import messageRouter from './routes/message.routes.js';
+import groupChatRouter from './routes/groupChat.routes.js';
 
 
 // router declaration
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/chats', chatRouter);
+app.use('/api/v1/friendships', friendshipRouter);
+app.use('/api/v1/messages', messageRouter);
+app.use('/api/v1/group-chats', groupChatRouter);
 
 
 export { app };

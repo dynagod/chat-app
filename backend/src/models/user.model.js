@@ -33,12 +33,6 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: defaultProfileImage
         },
-        friends: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
-            }
-        ],
         refreshToken: {
             type: String
         }
@@ -87,3 +81,5 @@ userSchema.methods.generateRefreshToken = async function () {
 };
 
 export const User =  mongoose.model("User", userSchema);
+
+// If a user is deleted, should their messages, chats, and friendships also be removed
