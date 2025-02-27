@@ -220,8 +220,6 @@ const changeCurrentProfilePic = asyncHandler( async (req, res) => {
 
   const oldProfileImagePath = req.user.avatar;
 
-  // req.user m kuch gadbad aa rahi h;
-
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
   const user = await User.findByIdAndUpdate(

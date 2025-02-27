@@ -4,20 +4,25 @@ import { Message } from "../models/message.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const sendMessage = asyncHandler( async (req, res) => {
-    const { conversationId, conversationType, content, messageType } = req.body;
+     const { conversationId, conversationType, text } = req.body;
 
-    if (!conversationId || !conversationType || !content) throw new ApiError(400, "Conversation ID, type and content are required");
+    if (!conversationId || !conversationType || !text) throw new ApiError(400, "Conversation ID, type and text are required");
 
     if (!["Chat", "GroupChat"].includes(conversationType)) throw new ApiError(400, "Invalid conversation type");
 
+    const imageLocalPath = req.file ? req.file.path : undefined;
+
+    const image = await uploadOnCloudinary(imageLocalPath);
+
     const message = await Message.create({
         sender: req.user._id,
-        content,
+        text,
+        image: image?.url,
         conversation: conversationId,
         conversationType,
-        messageType: messageType || "text"
     });
 
     if (conversationType === "Chat") await Chat.findByIdAndUpdate(conversationId, { latestMessage: message._id });
@@ -33,9 +38,9 @@ const getMessages = asyncHandler( async (req, res) => {
 
     if (!["Chat", "GroupChat"].includes(conversationType)) throw new ApiError(400, "Invalid conversation type");
 
-    const messages = (await Message.find({ conversation: conversationId, conversationType }))
+    const messages = await Message.find({ conversation: conversationId, conversationType })
         .populate("sender", "-password -refreshToken")
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: 1 });
     
     return res.status(200).json(new ApiResponse(200, { messages }, "Messages fetched successfully"));
 });

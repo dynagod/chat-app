@@ -7,9 +7,11 @@ const messageSchema = new mongoose.Schema(
             ref: "User",
             required: true
         },
-        content: {
+        text: {
             type: String,
-            required: true
+        },
+        image: {
+            type: String
         },
         conversation: {
             type: mongoose.Schema.Types.ObjectId,
@@ -25,11 +27,6 @@ const messageSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
-        messageType: {
-            type: String,
-            enum: ["text", "image"],
-            default: "text"
-        }
     },
     {
         timestamps: true
