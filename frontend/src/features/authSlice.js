@@ -162,7 +162,7 @@ const authSlice = createSlice({
         // Handle login async actions
         handleAsyncReducers(builder, authenticateUser, (state, action) => {
             state.isAuthenticated = true;
-            state.user = action.payload.data;
+            state.user = action.payload.data.user;
         });
 
         // Handle logout async actions

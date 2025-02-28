@@ -1,4 +1,4 @@
-import { Users } from 'lucide-react';
+import { Image, Users } from 'lucide-react';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUsers, setSelectedChat } from '../features/chatSlice';
@@ -56,8 +56,8 @@ const Sidebar = () => {
               dispatch(setConversationTypeAndId({ conversationType: "Chat", conversationId: chat._id }));
             }}
             className={`
-              w-full p-3 flex items-center gap-3
-              hover:bg-base-300 transition-colors
+              w-full p-3 flex items-center gap-3 rounded-full lg:rounded-2xl
+              hover:bg-base-300 transition-colors cursor-pointer
               ${selectedChat?._id === chat._id ? "bg-base-300 ring-1 ring-base-300" : ""}
             `}
           >
@@ -79,7 +79,10 @@ const Sidebar = () => {
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{otherUser.fullName}</div>
               <div className="text-sm text-zinc-400">
-                {isOnline ? "Online" : "Offline"}
+                {
+                  chat.latestMessage ? chat.latestMessage.text ? chat.latestMessage.text : <Image className='w-4 h-4' /> :
+                  isOnline ? "Online" : "Offline"
+                }
               </div>
             </div>
           </button>

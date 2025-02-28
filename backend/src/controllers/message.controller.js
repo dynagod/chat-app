@@ -7,9 +7,9 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const sendMessage = asyncHandler( async (req, res) => {
-     const { conversationId, conversationType, text } = req.body;
+    const { conversationId, conversationType, text } = req.body;
 
-    if (!conversationId || !conversationType || !text) throw new ApiError(400, "Conversation ID, type and text are required");
+    if (!conversationId || !conversationType) throw new ApiError(400, "Conversation ID amd type are required");
 
     if (!["Chat", "GroupChat"].includes(conversationType)) throw new ApiError(400, "Invalid conversation type");
 
@@ -17,13 +17,18 @@ const sendMessage = asyncHandler( async (req, res) => {
 
     const image = await uploadOnCloudinary(imageLocalPath);
 
-    const message = await Message.create({
+    const createMessage = await Message.create({
         sender: req.user._id,
         text,
         image: image?.url,
         conversation: conversationId,
         conversationType,
     });
+
+    if (!createMessage) throw new ApiError(400, "Something went wrong while creating the message model");
+
+    const message = await Message.findById(createMessage._id)
+        .populate("sender", "-password -refreshToken");
 
     if (conversationType === "Chat") await Chat.findByIdAndUpdate(conversationId, { latestMessage: message._id });
     else await GroupChat.findByIdAndUpdate(conversationId, { latestMessage: message._id });

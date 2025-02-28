@@ -18,7 +18,7 @@ const ChatContainer = () => {
     return new Date(date).toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false,
+      hour12: true,
     });
   };
 
@@ -51,16 +51,16 @@ const ChatContainer = () => {
         {messages.map((message) => (
           <div
             key={message._id}
-            className={`chat ${message.senderId === user._id ? "chat-end" : "chat-start"}`}
+            className={`chat ${message.sender._id === user._id ? "chat-end" : "chat-start"}`}
             ref={messageEndRef}
           >
             <div className=" chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
                   src={
-                    message.senderId === user._id
-                      ? user?.avatar || "/avatar.png"
-                      : otherUser?.avatar || "/avatar.png"
+                    message.sender._id === user._id
+                      ? user?.avatar
+                      : otherUser?.avatar
                   }
                   alt="profile pic"
                 />

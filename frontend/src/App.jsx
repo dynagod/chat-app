@@ -24,7 +24,7 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  if (loading || !isReady) // here it could be error if isAuthenticated is false u can use isReady instead of isAuthenticated if it happens 
+  if (loading) 
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />

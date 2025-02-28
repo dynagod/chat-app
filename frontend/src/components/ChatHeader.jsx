@@ -34,7 +34,7 @@ const ChatHeader = () => {
         </div>
 
         {/* Close button */}
-        <button onClick={() => dispatch(setSelectedChat(null))}>
+        <button onClick={() => dispatch(setSelectedChat(null))} className="cursor-pointer">
           <X />
         </button>
       </div>

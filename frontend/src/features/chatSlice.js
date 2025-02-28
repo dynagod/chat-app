@@ -4,7 +4,7 @@ import axios from 'axios';
 const initialState = {
     chats: [],
     selectedChat: null,
-    isChatsloading: false,
+    isChatsLoading: false,
     error: null,
     message: null
 };
@@ -32,18 +32,18 @@ const chatSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getUsers.pending, (state) => {
-                state.isChatsloading = true;
+                state.isChatsLoading = true;
                 state.error = null;
                 state.message = null;
                 state.chats = [];
             })
             .addCase(getUsers.fulfilled, (state, action) => {
-                state.isChatsloading = false;
+                state.isChatsLoading = false;
                 state.chats = action.payload.data.chats;
                 state.message = action.payload.message || "Action completed successfully";
             })
             .addCase(getUsers.rejected, (state, action) => {
-                state.isChatsloading = false;
+                state.isChatsLoading = false;
                 state.error = action.payload
                 state.message = action.payload.message;
             })
