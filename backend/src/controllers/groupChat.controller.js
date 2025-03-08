@@ -9,13 +9,18 @@ const createGroupChat = asyncHandler( async (req, res) => {
 
     if (!name || !users || users.length < 2) throw new ApiError(400, "A group chat must have a name and at least 2 members");
 
-    const groupChat = await GroupChat.create({
+    const newGroupChat = await GroupChat.create({
         name,
         users: [...users, req.user._id],
         admin: req.user._id
     });
 
-    if (!groupChat) throw new ApiError(500, "Something went wrong while creating the group");
+    if (!newGroupChat) throw new ApiError(500, "Something went wrong while creating the group");
+
+    const groupChat = await GroupChat.findById(newGroupChat._id)
+        .populate("users", "-password -refreshToken")
+        .populate("latestMessage")
+        .lean();
 
     return res.status(200).json(new ApiResponse(201, { groupChat }, "Group created successfully"));
 });
@@ -26,8 +31,6 @@ const getAllGroupChats = asyncHandler( async (req, res) => {
         .populate("latestMessage")
         .sort({ updatedAt: -1 })
         .lean();
-
-    if (!allGroupChats.length) return res.status(200).json(new ApiResponse(200, {}, "The user has no groupChat"));
 
     return res.status(200).json(new ApiResponse(200, { allGroupChats }, "Fetched all group chats of a user"));
 });

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '../features/authSlice.js';
 
 const ProfilePage = () => {
-  const { user, loading, isAuthenticated } = useSelector(state => state.auth);
+  const { user, isUserUpdating, isAuthenticated } = useSelector(state => state.auth);
 
   const [isEditingFullName, setIsEditingFullName] = useState(false);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -57,7 +57,7 @@ const ProfilePage = () => {
                   bg-base-content hover:scale-105
                   p-2 rounded-full cursor-pointer 
                   transition-all duration-200
-                  ${loading ? "animate-pulse pointer-events-none" : ""}
+                  ${isUserUpdating ? "animate-pulse pointer-events-none" : ""}
                 `}
               >
                 <Camera className="w-5 h-5 text-base-200" />
@@ -67,12 +67,12 @@ const ProfilePage = () => {
                   className="hidden"
                   accept="image/*"
                   onChange={handleImageUpdate}
-                  disabled={loading}
+                  disabled={isUserUpdating}
                 />
               </label>
             </div>
             <p className="text-sm text-zinc-400">
-              {loading ? "Uploading..." : "Click the camera icon to update your photo."}
+              {isUserUpdating ? "Uploading..." : "Click the camera icon to update your photo."}
               &nbsp;
               <button onClick={handleImageUpdate} className='text-red-600 cursor-pointer text-sm'>Click to remove the image</button>
             </p>

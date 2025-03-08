@@ -3,6 +3,8 @@ import { authSliceReducer } from './authSlice.js';
 import { themeSliceReducer } from './themeSlice.js';
 import { chatSliceReducer } from './chatSlice.js';
 import { messageSliceReducer } from './messageSlice.js';
+import { groupChatSliceReducer } from './groupChatSlice.js';
+import { friendshipSliceReducer } from './friendshipSlice.js';
 
 
 const store = configureStore({
@@ -10,7 +12,9 @@ const store = configureStore({
         auth: authSliceReducer,
         theme: themeSliceReducer,
         chat: chatSliceReducer,
+        groupChat: groupChatSliceReducer,
         message: messageSliceReducer,
+        friendship: friendshipSliceReducer
     }
 });
 

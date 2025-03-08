@@ -50,4 +50,17 @@ const getMessages = asyncHandler( async (req, res) => {
     return res.status(200).json(new ApiResponse(200, { messages }, "Messages fetched successfully"));
 });
 
-export { sendMessage, getMessages };
+const deleteMessage = asyncHandler( async (req, res) => {
+    const { conversationId, conversationType, messageId } = req.body;
+
+    if (!conversationId || !conversationType) throw new ApiError(400, "Conversation ID and type are required");
+
+    if (!["Chat", "GroupChat"].includes(conversationType)) throw new ApiError(400, "Invalid conversation type");
+
+    if (messageId) await Message.findByIdAndDelete(messageId);
+    else await Message.deleteMany({ conversation: conversationId, conversationType });
+
+    return res.status(200).json(new ApiResponse(200, {}, "Message(s) deleted successfully"));
+});
+
+export { sendMessage, getMessages, deleteMessage };

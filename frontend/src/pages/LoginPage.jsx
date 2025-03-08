@@ -1,8 +1,7 @@
 import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { authenticateUser } from '../features/authSlice';
 
 const LoginPage = () => {
@@ -11,7 +10,7 @@ const LoginPage = () => {
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const { loading, error, user } = useSelector(state => state.auth);
+  const { isUserLoading, user } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
@@ -20,15 +19,10 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    if (error) {
-      toast.error(error.message);
-    }
-  
     if (user) {
-      toast.success("User logged in successfully");
-      <NavLink to='/profile' />
+      <NavLink to='/chat' />
     }
-  }, [error, user]);
+  }, [user, isUserLoading]);
 
   return (
     <div className="h-screen grid lg:grid-cols-2">
@@ -99,8 +93,8 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full" disabled={loading}>
-              {loading ? (
+            <button type="submit" className="btn btn-primary w-full" disabled={isUserLoading}>
+              {isUserLoading ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Loading...

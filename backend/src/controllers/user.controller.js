@@ -236,7 +236,7 @@ const changeCurrentProfilePic = asyncHandler( async (req, res) => {
 
   return res
   .status(200)
-  .json(new ApiResponse(200, user, "Profile image updated successfuly"));
+  .json(new ApiResponse(200, { user }, "Profile image updated successfuly"));
 
 });
 
@@ -255,7 +255,7 @@ const changeCurrentFullName = asyncHandler( async (req, res) => {
 
   return res
   .status(200)
-  .json(new ApiResponse(200, user, "Full name updated successfuly"));
+  .json(new ApiResponse(200, { user }, "Full name updated successfuly"));
 });
 
 const changeCurentUsername = asyncHandler( async (req, res) => {
@@ -276,7 +276,7 @@ const changeCurentUsername = asyncHandler( async (req, res) => {
 
   return res
   .status(200)
-  .json(new ApiResponse(200, user, "Username updated successfuly"));
+  .json(new ApiResponse(200, { user }, "Username updated successfuly"));
 });
 
 const updateProfile = asyncHandler( async (req, res) => {
@@ -310,5 +310,5 @@ export {
   logOutUser,
   refreshAccessToken,
   getCurrentUser,
-  updateProfile
+  updateProfile,
 };

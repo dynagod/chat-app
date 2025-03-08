@@ -8,7 +8,7 @@ import { Loader } from 'lucide-react';
 
 
 const App = () => {
-  const { isAuthenticated, loading } = useSelector(state => state.auth);
+  const { isAuthenticated, isUserLoading } = useSelector(state => state.auth);
   const [isReady, setIsReady] = useState(false);
 
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const App = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  if (loading) 
+  if (isUserLoading) 
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />
