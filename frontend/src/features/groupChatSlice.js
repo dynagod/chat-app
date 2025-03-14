@@ -26,7 +26,6 @@ export const getGroupChats = createAsyncThunk(
     }
 );
 
-// Not in use
 export const createGroupChat = createAsyncThunk(
     CREATE_GROUP_CHAT,
     async ({ name, users }, { rejectWithValue }) => {
@@ -68,7 +67,6 @@ export const removeUserFromGroup = createAsyncThunk(
     }
 );
 
-// Not in use
 export const updateGroupName = createAsyncThunk(
     UPDATE_GROUP_NAME,
     async ({ groupId, name }, { rejectWithValue }) => {
@@ -82,7 +80,6 @@ export const updateGroupName = createAsyncThunk(
     }
 );
 
-// Not in use
 export const deleteGroup = createAsyncThunk(
     DELETE_GROUP,
     async (groupId, { rejectWithValue }) => {
@@ -161,6 +158,7 @@ const groupChatSlice = createSlice({
             })
             .addCase(updateGroupName.fulfilled, (state, action) => {
                 state.selectedGroupChat = action.payload.data.group;
+                state.groupChats = [action.payload.data.group, ...state.groupChats.filter(chat => chat._id !== action.meta.arg.groupId)];
                 state.updatingName = false;
             })
             .addCase(updateGroupName.rejected, (state, action) => {

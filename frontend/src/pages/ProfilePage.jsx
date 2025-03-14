@@ -1,13 +1,16 @@
-import { Camera, Check, Mail, Pencil, User } from 'lucide-react';
+import { Camera, Check, ChevronRight, Mail, Pencil, User, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '../features/authSlice.js';
+import { Avatar } from '../components';
 
 const ProfilePage = () => {
   const { user, isUserUpdating, isAuthenticated } = useSelector(state => state.auth);
+  const { friends } = useSelector(state => state.friendship);
 
   const [isEditingFullName, setIsEditingFullName] = useState(false);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
+  const[isFriendsPanelOpen, setIsFriendsPanelOpen] = useState(false);
 
   const [newData, setNewData] = useState({
     fullName: user?.fullName,
@@ -78,6 +81,53 @@ const ProfilePage = () => {
             </p>
           </div>
 
+          {/* Friends section */}
+          <div className='space-y-6'>
+            <div className="flex items-center cursor-pointer" onClick={() => setIsFriendsPanelOpen(!isFriendsPanelOpen)}>
+              <div className="text-sm text-zinc-400 flex items-center gap-2 mr-2">
+                <User className="w-4 h-4" />
+                Friends
+              </div>
+              <div className="flex ml-2">
+                {friends?.slice(0, 3).map((friend, index) => (
+                  <div key={index} className="relative -ml-3">
+                    <img
+                      src={friend?.avatar}
+                      alt="Friend Avatar"
+                      className="size-10 rounded-full object-cover border-2"
+                    />
+                  </div>
+                ))}
+              </div>
+              <ChevronRight className='size-4 ml-2' />
+            </div>
+            {isFriendsPanelOpen && friends.length > 0 && (
+              <div className="bg-base-200 p-4 rounded-lg">
+                <div className='flex justify-between mb-3'>
+                  <h3 className="text-xl">Your Friends</h3>
+                  <button
+                    onClick={() => setIsFriendsPanelOpen(false)}
+                    className="px-4 cursor-pointer bg-red-600 rounded-lg text-white"
+                  >
+                    <X className='size-4' />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  {friends?.map((friend, index) => (
+                    <div key={index} className="flex w-full">
+                      <Avatar user={friend} size={"48"} border={"2"} />
+                      <div className='ml-3'><p>{friend?.username}</p><p className='text-base-content/60'>{friend?.fullName}</p></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {friends.length === 0 && (
+              <div>You have no friends</div>
+            )}
+          </div>
+
           <div className="space-y-6">
             <div className="text-sm text-zinc-400 flex items-center gap-2 mb-1">
               <User className="w-4 h-4" />
@@ -94,7 +144,7 @@ const ProfilePage = () => {
                 />
                 <button
                   type="button"
-                  className={`absolute inset-y-1 right-0 mr-1.5 flex items-center px-4 rounded-lg cursor-pointer ${isEditingFullName ? "bg-green-600" : "bg-amber-500"}`}
+                  className={`absolute inset-y-1 right-0 mr-1.5 flex items-center px-4 rounded-lg cursor-pointer text-white ${isEditingFullName ? "bg-green-600" : "bg-amber-500"}`}
                   onClick={() => {
                     if (isEditingFullName) handleFullNameUpdate();
                     else setIsEditingFullName(true);
@@ -135,7 +185,7 @@ const ProfilePage = () => {
                 />
                 <button
                   type="button"
-                  className={`absolute inset-y-1 right-0 mr-1.5 flex items-center px-4 rounded-lg cursor-pointer ${isEditingUsername ? "bg-green-600" : "bg-amber-500"}`}
+                  className={`absolute inset-y-1 right-0 mr-1.5 flex items-center px-4 rounded-lg cursor-pointer text-white ${isEditingUsername ? "bg-green-600" : "bg-amber-500"}`}
                   onClick={() => {
                     if (isEditingUsername) handleUsernameUpdate();
                     else setIsEditingUsername(true);

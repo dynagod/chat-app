@@ -1,19 +1,18 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import ChatHeader from './ChatHeader';
-import { useDispatch, useSelector } from 'react-redux';
-import MessageInput from './MessageInput';
-import MessageSkeleton from './MessageSkeleton';
-import { getMessages } from '../features/messageSlice';
-import Avatar from './Avatar';
+import React, { useEffect, useMemo, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import MessageInput from "./MessageInput";
+import MessageSkeleton from "./MessageSkeleton";
+import { getMessages } from "../features/messageSlice";
+import Avatar from "./Avatar";
+import GroupChatHeader from "./GroupChatHeader";
 
-const ChatContainer = () => {
-  const { selectedChat } = useSelector(state => state.chat);
-  const { user } = useSelector(state => state.auth);
-  const { messages, isMessagesLoading, conversationType, conversationId } = useSelector(state => state.message);
+const GroupChatContainer = () => {
+  const { selectedGroupChat } = useSelector((state) => state.groupChat);
+  const { user } = useSelector((state) => state.auth);
+  const { messages, isMessagesLoading, conversationType, conversationId } =
+    useSelector((state) => state.message);
 
   const dispatch = useDispatch();
-
-  const otherUser = useMemo(() => selectedChat?.users.find(u => u._id !== user._id), [selectedChat, user]);
 
   const formatMessageTime = (date) => {
     return new Date(date).toLocaleTimeString("en-US", {
@@ -24,8 +23,9 @@ const ChatContainer = () => {
   };
 
   useEffect(() => {
-    if (conversationId && conversationType) dispatch(getMessages({ conversationType, conversationId }));
-  }, [dispatch, conversationId])
+    if (conversationId && conversationType)
+      dispatch(getMessages({ conversationType, conversationId }));
+  }, [dispatch, conversationId]);
 
   const messageEndRef = useRef(null);
   useEffect(() => {
@@ -37,7 +37,7 @@ const ChatContainer = () => {
   if (isMessagesLoading) {
     return (
       <div className="flex-1 flex flex-col overflow-auto">
-        <ChatHeader />
+        <GroupChatHeader />
         <MessageSkeleton />
         <MessageInput />
       </div>
@@ -46,17 +46,24 @@ const ChatContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
-      <ChatHeader />
+      <GroupChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
             key={message._id}
-            className={`chat ${message.sender._id === user._id ? "chat-end" : "chat-start"}`}
+            className={`chat ${
+              message.sender._id !== user._id ? "chat-start" : "chat-end"
+            }`}
             ref={messageEndRef}
           >
             <div className="chat-image">
-              <Avatar user={message.sender._id === user._id ? user : otherUser} size={"40"} border={"1"} position={message.sender._id === user._id ? "right" : "left"} />
+              <Avatar
+                user={message.sender}
+                size={"40"}
+                border={"1"}
+                position={message.sender._id === user._id ? "right" : "left"}
+              />
             </div>
             <div className="chat-header mb-1">
               <time className="text-xs opacity-50 ml-1">
@@ -82,4 +89,4 @@ const ChatContainer = () => {
   );
 };
 
-export default ChatContainer;
+export default GroupChatContainer;

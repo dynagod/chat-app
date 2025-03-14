@@ -29,11 +29,16 @@ const Navbar = () => {
 
   // Add event listener on mount and remove on unmount
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
+      if (boxOpen) {
+        document.addEventListener("mousedown", handleClickOutside);
+      } else {
+        document.removeEventListener("mousedown", handleClickOutside);
+      }
+  
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [boxOpen]);
 
   const handleAcceptRequest = async (request) => {
     await dispatch(acceptFriendRequest(request._id));
@@ -83,7 +88,7 @@ const Navbar = () => {
                   {friendRequests.length !== 0 && (
                     <span
                       className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 
-                      rounded-full ring-zinc-900 p-2 flex items-center justify-center"
+                      rounded-full ring-zinc-900 p-2 flex items-center justify-center text-white"
                     >
                       {friendRequests.length}
                     </span>
@@ -91,7 +96,7 @@ const Navbar = () => {
                 </button>
 
                 {boxOpen && (
-                  <div ref={notificationRef} className="overflow-auto absolute h-60 -left-20 top-12 bg-base-100 w-50 sm:w-64 p-3 shadow-lg rounded-lg z-50">
+                  <div ref={notificationRef} className="overflow-auto absolute max-h-60 -left-20 top-12 bg-base-100 w-50 sm:w-64 p-3 shadow-lg rounded-lg z-50">
                     <ul className="mt-2">
                       {friendRequests.length === 0 ? (
                         <li>No new friend requests</li>
@@ -135,7 +140,7 @@ const Navbar = () => {
                 <span className="hidden sm:inline">Profile</span>
               </Link>
 
-              <button className="btn btn-sm gap-2 bg-red-600 hover:bg-red-700" onClick={() => dispatch(logoutUser())}>
+              <button className="btn btn-sm gap-2 bg-red-600 hover:bg-red-700 text-white" onClick={() => dispatch(logoutUser())}>
                 <LogOut className="size-5" />
                 <span className="hidden sm:inline">Logout</span>
               </button>

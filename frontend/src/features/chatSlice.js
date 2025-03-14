@@ -38,7 +38,6 @@ export const createChat = createAsyncThunk(
     }
 );
 
-// Not in use
 export const deleteChat = createAsyncThunk(
     DELETE_CHAT,
     async (chatId, { rejectWithValue }) => {
@@ -82,7 +81,6 @@ const chatSlice = createSlice({
             .addCase(createChat.fulfilled, (state, action) => {
                 state.chats = [action.payload.data.chat, ...state.chats];
                 state.isCreatingChat = false;
-                console.log(state.chats);
             })
             .addCase(createChat.rejected, (state, action) => {
                 state.error = action.payload;

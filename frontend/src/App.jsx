@@ -5,6 +5,7 @@ import { ChatPage, HomePage, LoginPage, ProfilePage, RegisterPage, SettingsPage 
 import { useDispatch, useSelector } from 'react-redux';
 import { authenticateUser } from './features/authSlice';
 import { Loader } from 'lucide-react';
+import { getFriends } from './features/friendshipSlice';
 
 
 const App = () => {
@@ -12,9 +13,14 @@ const App = () => {
   const [isReady, setIsReady] = useState(false);
 
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (!isAuthenticated) dispatch(authenticateUser({ route: '/api/v1/users/get-current-user' }));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated) dispatch(getFriends());
+  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

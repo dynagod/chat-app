@@ -9,7 +9,7 @@ const sendFriendRequest = asyncHandler( async (req, res) => {
 
     if (!username) throw new ApiError(400, "User is not send with body");
 
-    if (username.toString() === req.user._id.toString()) throw new ApiError(400, "You cannot send friend request to yourself");
+    if (username.toString() === req.user.username.toString()) throw new ApiError(400, "You cannot send friend request to yourself");
 
     const user = await User.findOne({ username });
 

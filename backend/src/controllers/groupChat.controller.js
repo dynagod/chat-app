@@ -19,7 +19,13 @@ const createGroupChat = asyncHandler( async (req, res) => {
 
     const groupChat = await GroupChat.findById(newGroupChat._id)
         .populate("users", "-password -refreshToken")
-        .populate("latestMessage")
+        .populate({
+            path: "latestMessage",
+            populate: {
+                path: "sender",
+                select: "-password -refreshToken"
+            }
+        })
         .lean();
 
     return res.status(200).json(new ApiResponse(201, { groupChat }, "Group created successfully"));
@@ -28,7 +34,13 @@ const createGroupChat = asyncHandler( async (req, res) => {
 const getAllGroupChats = asyncHandler( async (req, res) => {
     const allGroupChats = await GroupChat.find({ users: req.user._id })
         .populate("users", "-password -refreshToken")
-        .populate("latestMessage")
+        .populate({
+            path: "latestMessage",
+            populate: {
+                path: "sender",
+                select: "-password -refreshToken"
+            }
+        })
         .sort({ updatedAt: -1 })
         .lean();
 

@@ -1,9 +1,10 @@
 import React from 'react';
-import { ChatContainer, NoChatSelected, Sidebar } from '../components';
+import { ChatContainer, GroupChatContainer, NoChatSelected, Sidebar } from '../components';
 import { useSelector } from 'react-redux';
 
 const ChatPage = () => {
   const { selectedChat } = useSelector(state => state.chat);
+  const { selectedGroupChat } = useSelector(state => state.groupChat);
 
   return (
     <div className="h-screen bg-base-200">
@@ -12,7 +13,7 @@ const ChatPage = () => {
           <div className="flex h-full rounded-lg overflow-hidden">
             <Sidebar />
 
-            {!selectedChat ? <NoChatSelected /> : <ChatContainer />}
+            {selectedChat ? <ChatContainer /> : selectedGroupChat ? <GroupChatContainer /> : <NoChatSelected />}
           </div>
         </div>
       </div>

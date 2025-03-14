@@ -42,7 +42,7 @@ const ChatHeader = () => {
         </div>
 
         {/* Remove Friend */}
-        <button className="btn btn-sm gap-2 bg-red-600 hover:bg-red-700" onClick={handleLogout}>
+        <button className="btn btn-sm gap-2 bg-red-600 hover:bg-red-700 text-white" onClick={handleLogout}>
           <UserX className="size-5" />
           <span className="hidden sm:inline">Remove friend</span>
         </button>

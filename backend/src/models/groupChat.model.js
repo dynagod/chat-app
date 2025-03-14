@@ -1,10 +1,15 @@
 import mongoose from "mongoose";
+import { defaultGroupImage } from "../constants.js";
 
 const groupChatSchema = new mongoose.Schema(
     {
         name: {
             type: String,
             required: true
+        },
+        image: {
+            type: String,
+            default: defaultGroupImage
         },
         users: [
             {

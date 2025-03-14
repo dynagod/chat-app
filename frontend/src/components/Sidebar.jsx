@@ -2,13 +2,25 @@ import { Group, Users } from 'lucide-react';
 import React, { useState } from 'react';
 import GroupChatSidebar from './GroupChatSidebar';
 import ChatSidebar from './ChatSidebar';
+import { useDispatch } from 'react-redux';
+import { setSelectedChat } from '../features/chatSlice';
+import { setSelectedGroupChat } from '../features/groupChatSlice';
 
 const Sidebar = () => {
   const [isGroupChatSelected, setIsGroupChatSelected] = useState(false);
 
+  const dispatch = useDispatch();
+
   return (
     <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
-      <div className="border-b border-base-300 w-full p-5" onClick={ () => setIsGroupChatSelected(!isGroupChatSelected) }>
+      <div
+        className="border-b border-base-300 w-full p-5"
+        onClick={() => {
+          setIsGroupChatSelected(!isGroupChatSelected);
+          if (!isGroupChatSelected) dispatch(setSelectedChat(null));
+          else dispatch(setSelectedGroupChat(null));
+        }}
+      >
         <div className="flex items-center gap-2 cursor-pointer">
           {isGroupChatSelected ? <Group className="size-6" /> : <Users className="size-6" />}
           <span className="font-medium hidden lg:block">{isGroupChatSelected ? "Groups" : "Friends"}</span>
