@@ -81,7 +81,6 @@ export const removeFriend = createAsyncThunk(
     }
 );
 
-// Not in use
 export const getFriends = createAsyncThunk(
     GET_ALL_FRIENDS,
     async (_, { rejectWithValue }) => {

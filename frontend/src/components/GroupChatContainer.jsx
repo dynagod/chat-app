@@ -2,14 +2,15 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./MessageSkeleton";
-import { getMessages } from "../features/messageSlice";
+import { deleteMessage, getMessages } from "../features/messageSlice";
 import Avatar from "./Avatar";
 import GroupChatHeader from "./GroupChatHeader";
+import { Trash2 } from "lucide-react";
 
 const GroupChatContainer = () => {
   const { selectedGroupChat } = useSelector((state) => state.groupChat);
   const { user } = useSelector((state) => state.auth);
-  const { messages, isMessagesLoading, conversationType, conversationId } =
+  const { messages, isMessagesLoading, conversationType, conversationId, isDeletingMessage } =
     useSelector((state) => state.message);
 
   const dispatch = useDispatch();
@@ -65,10 +66,19 @@ const GroupChatContainer = () => {
                 position={message.sender._id === user._id ? "right" : "left"}
               />
             </div>
-            <div className="chat-header mb-1">
+            <div className="chat-header mb-1 flex items-center">
+              <span className='text-base'>{message.sender.username}</span>
               <time className="text-xs opacity-50 ml-1">
                 {formatMessageTime(message.createdAt)}
               </time>
+              { message.sender._id === user._id && !isDeletingMessage && (
+                <button
+                  onClick={() => dispatch(deleteMessage({ conversationId, conversationType, messageId: message._id }))}
+                  className='hover:cursor-pointer'
+                >
+                  <Trash2 className='text-red-600 size-4'/>
+                </button>
+              ) }
             </div>
             <div className="chat-bubble flex flex-col">
               {message.image && (

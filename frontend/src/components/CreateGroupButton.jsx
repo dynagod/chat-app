@@ -29,31 +29,6 @@ const CreateGroupButton = () => {
     }
   };
 
-  const modalRef = useRef(null);
-
-  const handleClickOutside = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setIsOpen(false);
-      setGroupCredentials({
-        ...groupCredentials,
-        name: "",
-        users: [],
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
-
   const toggleModal = () => {
     setIsOpen(!isOpen);
     setGroupCredentials({
@@ -83,10 +58,7 @@ const CreateGroupButton = () => {
       {/* Modal content */}
       {isOpen && (
         <div className="fixed inset-0 bg-base-100/70 bg-opacity-50 flex justify-center items-center z-50">
-          <div
-            ref={modalRef}
-            className="bg-base-200 p-6 rounded-lg w-96 shadow-lg relative"
-          >
+          <div className="bg-base-200 p-6 rounded-lg w-96 shadow-lg relative">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold">Create Group</h2>
               <button

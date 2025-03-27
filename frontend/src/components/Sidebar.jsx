@@ -21,7 +21,7 @@ const Sidebar = () => {
           else dispatch(setSelectedGroupChat(null));
         }}
       >
-        <div className="flex items-center gap-2 cursor-pointer">
+        <div className="flex items-center justify-center gap-2 cursor-pointer">
           {isGroupChatSelected ? <Group className="size-6" /> : <Users className="size-6" />}
           <span className="font-medium hidden lg:block">{isGroupChatSelected ? "Groups" : "Friends"}</span>
         </div>

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from 'axios';
 import toast from "react-hot-toast";
 import { AUTHENTICATE, LOGOUT, REFRESH_ACCESS_TOKEN, UPDATE_USER } from "../constants";
+import { disconnectSocket, initializeSocketListeners } from "./socketSlice";
 
 const initialState = {
     isAuthenticated: false,
@@ -13,22 +14,38 @@ const initialState = {
 
 export const authenticateUser = createAsyncThunk(
     AUTHENTICATE,
-    async ({ route, userCredentials }, { rejectWithValue }) => {
+    async ({ route, userCredentials }, { dispatch, rejectWithValue }) => {
         try {
             const response = await axios.post(route, userCredentials);
+            dispatch(initializeSocketListeners(response.data.data.user));
             return response.data;
         } catch (error) {
-            console.error("Error response: ", error.response);
-            return rejectWithValue(error.response?.data?.message || "An unexpected error occurred");
+            if (error.response?.data?.message === "jwt expired") {
+                await dispatch(refreshAccessToken());
+
+                try {
+                    const retryResponse = await axios.post(route, userCredentials);
+                    dispatch(initializeSocketListeners(retryResponse.data.data.user));
+                    return retryResponse.data;
+                } catch (err) {
+                    console.error("Error response: ", err.response);
+                    return rejectWithValue(err.response?.data?.message || "An unexpected error occurred");
+                }
+            }
+            else {
+                console.error("Error response: ", error.response);
+                return rejectWithValue(error.response?.data?.message || "An unexpected error occurred");
+            }
         }
     }
 );
 
 export const logoutUser = createAsyncThunk(
     LOGOUT,
-    async (_, { rejectWithValue }) => {
+    async (_, { dispatch, rejectWithValue }) => {
         try {
             const response = await axios.post('/api/v1/users/logout');
+            dispatch(disconnectSocket());
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -50,12 +67,11 @@ export const updateUser = createAsyncThunk(
     }
 );
 
-// Not in use
 export const refreshAccessToken = createAsyncThunk(
     REFRESH_ACCESS_TOKEN,
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.put(`/api/v1/users/refresh-token`);
+            const response = await axios.post(`/api/v1/users/refresh-token`);
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);

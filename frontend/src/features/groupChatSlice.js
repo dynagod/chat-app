@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { ADD_USER_TO_GROUP, CREATE_GROUP_CHAT, DELETE_GROUP, GET_GROUP_CHATS, REMOVE_USER_FROM_GROUP, UPDATE_GROUP_NAME } from "../constants";
+import { sendMessage } from "./messageSlice";
 
 const initialState = {
     groupChats: [],
@@ -84,7 +85,7 @@ export const deleteGroup = createAsyncThunk(
     DELETE_GROUP,
     async (groupId, { rejectWithValue }) => {
         try {
-            const response = await axios.put(`/api/v1/group-chats/${groupId}`);
+            const response = await axios.delete(`/api/v1/group-chats/${groupId}`);
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -99,6 +100,9 @@ const groupChatSlice = createSlice({
     reducers: {
         setSelectedGroupChat: (state, action) => {
             state.selectedGroupChat = action.payload;
+        },
+        setLatestMessageInGroupChat: (state, action) => {
+            state.groupChats[action.payload.chatIndex].latestMessage = action.payload.message;
         }
     },
     extraReducers: (builder) => {
@@ -170,16 +174,21 @@ const groupChatSlice = createSlice({
                 state.error = null;
             })
             .addCase(deleteGroup.fulfilled, (state, action) => {
-                state.groupChats = state.groupChats.filter(groupChat => groupChat._id !== action.meta.arg.groupId);
+                state.groupChats = state.groupChats.filter(groupChat => groupChat._id !== action.meta.arg);
                 state.isDeletingGroupChat = false;
             })
             .addCase(deleteGroup.rejected, (state, action) => {
                 state.error = action.payload;
                 state.isDeletingGroupChat = false;
             })
+            .addCase(sendMessage.fulfilled, (state, action) => {
+                const chatIndex = state.groupChats.findIndex(group => group._id === action.payload.data.message.conversation);
+            
+                if (chatIndex >= 0) state.groupChats[chatIndex].latestMessage = action.payload.data.message;
+            })
     }
 });
 
-export const { setSelectedGroupChat } = groupChatSlice.actions;
+export const { setSelectedGroupChat, setLatestMessageInGroupChat } = groupChatSlice.actions;
 
 export const groupChatSliceReducer = groupChatSlice.reducer;

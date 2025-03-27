@@ -5,6 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { getReceiverSocketId, io } from "../utils/socket.js";
 
 const sendMessage = asyncHandler( async (req, res) => {
     const { conversationId, conversationType, text } = req.body;
@@ -33,6 +34,16 @@ const sendMessage = asyncHandler( async (req, res) => {
     if (conversationType === "Chat") await Chat.findByIdAndUpdate(conversationId, { latestMessage: message._id });
     else await GroupChat.findByIdAndUpdate(conversationId, { latestMessage: message._id });
 
+    const chat = conversationType === "Chat" ? await Chat.findByIdAndUpdate(conversationId, { latestMessage: message._id }, { new: true }) : await GroupChat.findByIdAndUpdate(conversationId, { latestMessage: message._id }, { new: true });
+
+    const receiverIds = chat.users.filter(u => u.toString() !== req.user._id.toString()).map(u => u.toString());
+
+    const socketIds = getReceiverSocketId(receiverIds);
+
+    socketIds.forEach(socketId => {
+        io.to(socketId).emit("new_message", message);
+    });
+
     return res.status(200).json(new ApiResponse(200, { message }, "Message sent successfully"));
 });
 
@@ -59,6 +70,16 @@ const deleteMessage = asyncHandler( async (req, res) => {
 
     if (messageId) await Message.findByIdAndDelete(messageId);
     else await Message.deleteMany({ conversation: conversationId, conversationType });
+
+    const chat = conversationType === "Chat" ? await Chat.findById(conversationId) : await GroupChat.findById(conversationId);
+
+    const receiverIds = chat.users.filter(u => u.toString() !== req.user._id.toString()).map(u => u.toString());
+
+    const socketIds = getReceiverSocketId(receiverIds);
+
+    socketIds.forEach(socketId => {
+        io.to(socketId).emit("delete_message", { messageId, conversationType });
+    });
 
     return res.status(200).json(new ApiResponse(200, {}, "Message(s) deleted successfully"));
 });

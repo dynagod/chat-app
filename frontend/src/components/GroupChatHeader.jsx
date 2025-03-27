@@ -1,4 +1,13 @@
-import { Check, Pencil, Settings, Trash2, User, Users, X } from "lucide-react";
+import {
+  Check,
+  Eraser,
+  Pencil,
+  Settings,
+  Trash2,
+  User,
+  Users,
+  X,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteGroup,
@@ -6,10 +15,15 @@ import {
   updateGroupName,
 } from "../features/groupChatSlice";
 import { useEffect, useRef, useState } from "react";
+import { deleteMessage } from "../features/messageSlice";
 
 const GroupChatHeader = () => {
   const { selectedGroupChat } = useSelector((state) => state.groupChat);
   const { user } = useSelector((state) => state.auth);
+  const { onlineUsers } = useSelector((state) => state.socket);
+  const { conversationType, conversationId } = useSelector(
+    (state) => state.message
+  );
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -18,13 +32,11 @@ const GroupChatHeader = () => {
 
   useEffect(() => {
     setGroupName(selectedGroupChat.name);
-  }, [selectedGroupChat])
+  }, [selectedGroupChat]);
 
   const dispatch = useDispatch();
 
   const settingRef = useRef(null);
-
-  const onlineUsers = [];
 
   useEffect(() => {
     setIsAdmin(selectedGroupChat.admin === user._id);
@@ -76,8 +88,12 @@ const GroupChatHeader = () => {
           <div>
             <h3 className="font-medium">{selectedGroupChat.name}</h3>
             <p className="text-sm text-base-content/70">
-              {/* {onlineUsers.includes(otherUser._id) ? "Online" : "Offline"} */}
-              Online
+              {selectedGroupChat.users.map((member, idx) => (
+                <span key={idx}>
+                  {idx === 0 ? "" : ", "}
+                  {member.username}
+                </span>
+              ))}
             </p>
           </div>
         </div>
@@ -129,25 +145,41 @@ const GroupChatHeader = () => {
                         onChange={(e) => setGroupName(e.target.value)}
                         className={`px-4 py-2.5 bg-base-200 rounded-lg border w-full`}
                       />
-                      {isAdmin && <button
-                        type="button"
-                        className={`absolute inset-y-1 right-0 mr-1.5 flex items-center px-4 rounded-lg cursor-pointer text-white ${
-                          isEditingGroupName ? "bg-green-600" : "bg-amber-500"
-                        }`}
-                        onClick={() => {
-                          if (isEditingGroupName) handleGroupNameUpdate();
-                          else setIsEditingGroupName(true);
-                        }}
-                      >
-                        {!isEditingGroupName ? (
-                          <Pencil className="h-5 w-5" />
-                        ) : (
-                          <Check className="h-5 w-5" />
-                        )}
-                      </button>}
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          className={`absolute inset-y-1 right-0 mr-1.5 flex items-center px-4 rounded-lg cursor-pointer text-white ${
+                            isEditingGroupName ? "bg-green-600" : "bg-amber-500"
+                          }`}
+                          onClick={() => {
+                            if (isEditingGroupName) handleGroupNameUpdate();
+                            else setIsEditingGroupName(true);
+                          }}
+                        >
+                          {!isEditingGroupName ? (
+                            <Pencil className="h-5 w-5" />
+                          ) : (
+                            <Check className="h-5 w-5" />
+                          )}
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
+
+                {/* Clear Messages */}
+                <button
+                  className="btn btn-sm gap-2 w-full p-6"
+                  onClick={() => {
+                    dispatch(
+                      deleteMessage({ conversationId, conversationType })
+                    );
+                    setIsSettingsOpen(false);
+                  }}
+                >
+                  <Eraser className="size-5" />
+                  <span className="text-xl">Clear All Messages</span>
+                </button>
               </div>
             </div>
           )}

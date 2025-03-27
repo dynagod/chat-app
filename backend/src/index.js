@@ -1,13 +1,13 @@
 // require('dotenv').config({path: './env'});
 import dotenv from 'dotenv';
 import connectDb from "./db/index.js";
-import { app } from './app.js';
+import { server } from './utils/socket.js';
 
 dotenv.config({path: './env'});
 
 connectDb()
 .then(() => {
-    app.listen(process.env.PORT || 8000, () => {
+    server.listen(process.env.PORT, () => {
         console.log(`Server is running at port: ${process.env.PORT}`);
     });
 })

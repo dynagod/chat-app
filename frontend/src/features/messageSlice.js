@@ -38,12 +38,11 @@ export const sendMessage = createAsyncThunk(
     }
 );
 
-// Not in use
 export const deleteMessage = createAsyncThunk(
     DELETE_MESSAGE,
     async ({ conversationId, conversationType, messageId }, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/messages/delete', { conversationId, conversationType, messageId });
+            const response = await axios.delete('/api/v1/messages/delete', { data: { conversationId, conversationType, messageId } });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -59,6 +58,13 @@ const messageSlice = createSlice({
         setConversationTypeAndId: (state, action) => {
             state.conversationType = action.payload.conversationType;
             state.conversationId = action.payload.conversationId;
+        },
+        subscribeToMessage: (state, action) => {
+            state.messages = [...state.messages, action.payload];
+        },
+        removeMessage: (state, action) => {
+            if (action.payload) state.messages = state.messages.filter(message => message._id !== action.payload);
+            else state.messages = [];
         }
     },
     extraReducers: (builder) => {
@@ -103,6 +109,6 @@ const messageSlice = createSlice({
     }
 });
 
-export const { setConversationTypeAndId } = messageSlice.actions;
+export const { setConversationTypeAndId, subscribeToMessage, removeMessage } = messageSlice.actions;
 
 export const messageSliceReducer = messageSlice.reducer;
