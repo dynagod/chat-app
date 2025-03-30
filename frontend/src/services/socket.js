@@ -4,7 +4,7 @@ let socket = null;
 
 const createSocket = (user) => {
     if (!socket) {
-        socket = io('http://localhost:3000', {
+        socket = io(process.env.REACT_APP_BACKEND_URL, {
             transports: ['websocket'],
             withCredentials: true,
             query: { userId: user._id }
