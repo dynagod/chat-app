@@ -33,7 +33,7 @@ export const authenticateUser = createAsyncThunk(
                 }
             }
             else {
-                console.error("Error response: ", error.response);
+                console.error("Error response: ", error);
                 return rejectWithValue(error.response?.data?.message || "An unexpected error occurred");
             }
         }
