@@ -18,6 +18,7 @@ export const authenticateUser = createAsyncThunk(
         try {
             const response = await axios.post(route, userCredentials);
             dispatch(initializeSocketListeners(response.data.data.user));
+            console.log(response.data)
             return response.data;
         } catch (error) {
             if (error.response?.data?.message === "jwt expired") {
