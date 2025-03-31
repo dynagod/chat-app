@@ -75,8 +75,6 @@ export const disconnectSocket = () => (dispatch) => {
 
     if (socket && !socket.connected) return;
 
-    console.log('socket is disconnecting...')
-
     socket.disconnect();
     clearSocket();
     dispatch(setSocketConnection({ socketId: null, isConnected: false }));

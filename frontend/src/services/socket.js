@@ -4,7 +4,7 @@ let socket = null;
 
 const createSocket = (user) => {
     if (!socket) {
-        socket = io(process.env.REACT_APP_BACKEND_URL, {
+        socket = io(import.meta.env.VITE_BACKEND_URL, {
             transports: ['websocket'],
             withCredentials: true,
             query: { userId: user._id }
