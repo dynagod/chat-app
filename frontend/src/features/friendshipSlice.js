@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { ACCEPT_FRIEND_REQUEST, GET_ALL_FRIENDS, GET_ALL_PENDING_REQUESTS, REJECT_FRIEND_REQUEST, REMOVE_FRIEND, SEND_FRIEND_REQUEST } from "../constants";
+import instance from "../services/axios";
 
 const initialState = {
     friends: [],
@@ -20,7 +20,7 @@ export const sendFriendRequest = createAsyncThunk(
     SEND_FRIEND_REQUEST,
     async (username, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/friendships/send', { username });
+            const response = await instance.post('/api/v1/friendships/send', { username });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -33,7 +33,7 @@ export const getAllPendingRequests = createAsyncThunk(
     GET_ALL_PENDING_REQUESTS,
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get('/api/v1/friendships/requests');
+            const response = await instance.get('/api/v1/friendships/requests');
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -46,7 +46,7 @@ export const acceptFriendRequest = createAsyncThunk(
     ACCEPT_FRIEND_REQUEST,
     async (requestId, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/friendships/accept', { requestId });
+            const response = await instance.post('/api/v1/friendships/accept', { requestId });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -59,7 +59,7 @@ export const rejectFriendRequest = createAsyncThunk(
     REJECT_FRIEND_REQUEST,
     async (requestId, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/friendships/reject', { requestId });
+            const response = await instance.post('/api/v1/friendships/reject', { requestId });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -72,7 +72,7 @@ export const removeFriend = createAsyncThunk(
     REMOVE_FRIEND,
     async (userId, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/friendships/remove', { userId });
+            const response = await instance.post('/api/v1/friendships/remove', { userId });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -85,7 +85,7 @@ export const getFriends = createAsyncThunk(
     GET_ALL_FRIENDS,
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get('/api/v1/friendships/friends');
+            const response = await instance.get('/api/v1/friendships/friends');
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);

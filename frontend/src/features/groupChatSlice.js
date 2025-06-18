@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { ADD_USER_TO_GROUP, CREATE_GROUP_CHAT, DELETE_GROUP, GET_GROUP_CHATS, REMOVE_USER_FROM_GROUP, UPDATE_GROUP_NAME } from "../constants";
 import { sendMessage } from "./messageSlice";
+import instance from "../services/axios";
 
 const initialState = {
     groupChats: [],
@@ -18,7 +18,7 @@ export const getGroupChats = createAsyncThunk(
     GET_GROUP_CHATS,
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get('/api/v1/group-chats');
+            const response = await instance.get('/api/v1/group-chats');
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -31,7 +31,7 @@ export const createGroupChat = createAsyncThunk(
     CREATE_GROUP_CHAT,
     async ({ name, users }, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/group-chats', { name, users });
+            const response = await instance.post('/api/v1/group-chats', { name, users });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -45,7 +45,7 @@ export const addUserToGroup = createAsyncThunk(
     ADD_USER_TO_GROUP,
     async ({ groupId, userId }, { rejectWithValue }) => {
         try {
-            const response = await axios.put('/api/v1/group-chats/add', { groupId, userId });
+            const response = await instance.put('/api/v1/group-chats/add', { groupId, userId });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -59,7 +59,7 @@ export const removeUserFromGroup = createAsyncThunk(
     REMOVE_USER_FROM_GROUP,
     async ({ groupId, userId }, { rejectWithValue }) => {
         try {
-            const response = await axios.put('/api/v1/group-chats/remove', { groupId, userId });
+            const response = await instance.put('/api/v1/group-chats/remove', { groupId, userId });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -72,7 +72,7 @@ export const updateGroupName = createAsyncThunk(
     UPDATE_GROUP_NAME,
     async ({ groupId, name }, { rejectWithValue }) => {
         try {
-            const response = await axios.put('/api/v1/group-chats/update', { groupId, name });
+            const response = await instance.put('/api/v1/group-chats/update', { groupId, name });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -85,7 +85,7 @@ export const deleteGroup = createAsyncThunk(
     DELETE_GROUP,
     async (groupId, { rejectWithValue }) => {
         try {
-            const response = await axios.delete(`/api/v1/group-chats/${groupId}`);
+            const response = await instance.delete(`/api/v1/group-chats/${groupId}`);
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { DELETE_MESSAGE, GET_MESSAGES, SEND_MESSAGE } from "../constants";
+import instance from "../services/axios";
 
 const initialState = {
     messages: [],
@@ -16,7 +16,7 @@ export const getMessages = createAsyncThunk(
     GET_MESSAGES,
     async ({ conversationId, conversationType }, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`/api/v1/messages/${conversationId}/${conversationType}`);
+            const response = await instance.get(`/api/v1/messages/${conversationId}/${conversationType}`);
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -29,7 +29,7 @@ export const sendMessage = createAsyncThunk(
     SEND_MESSAGE,
     async (formData, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/messages', formData);
+            const response = await instance.post('/api/v1/messages', formData);
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -42,7 +42,7 @@ export const deleteMessage = createAsyncThunk(
     DELETE_MESSAGE,
     async ({ conversationId, conversationType, messageId }, { rejectWithValue }) => {
         try {
-            const response = await axios.delete('/api/v1/messages/delete', { data: { conversationId, conversationType, messageId } });
+            const response = await instance.delete('/api/v1/messages/delete', { data: { conversationId, conversationType, messageId } });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);

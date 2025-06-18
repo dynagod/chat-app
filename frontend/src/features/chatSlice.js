@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { CREATE_CHAT, DELETE_CHAT, GET_CHATS } from '../constants';
 import { sendMessage } from './messageSlice';
+import instance from '../services/axios';
 
 const initialState = {
     chats: [],
@@ -16,7 +16,7 @@ export const getUsers = createAsyncThunk(
     GET_CHATS,
     async (_, { rejectWithValue }) => {
         try {
-            const response = await axios.get('/api/v1/chats/get');
+            const response = await instance.get('/api/v1/chats/get');
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -29,7 +29,7 @@ export const createChat = createAsyncThunk(
     CREATE_CHAT,
     async (userId, { rejectWithValue }) => {
         try {
-            const response = await axios.post('/api/v1/chats/create', { userId });
+            const response = await instance.post('/api/v1/chats/create', { userId });
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
@@ -42,7 +42,7 @@ export const deleteChat = createAsyncThunk(
     DELETE_CHAT,
     async (chatId, { rejectWithValue }) => {
         try {
-            const response = await axios.delete(`/api/v1/chats/delete/${chatId}`);
+            const response = await instance.delete(`/api/v1/chats/delete/${chatId}`);
             return response.data;
         } catch (error) {
             console.error("Error response: ", error.response);
