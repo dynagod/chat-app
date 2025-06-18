@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Bell, Loader2, LogOut, MessageSquare, Settings, User } from 'lucide-react';
+import { Bell, Loader2, LogOut, MessageSquare, Settings, User, UserPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser } from '../features/authSlice';
@@ -56,7 +56,7 @@ const Navbar = () => {
     <div className="container mx-auto px-4 h-16">
       <div className="flex items-center justify-between h-full">
         <div className="flex items-center gap-8">
-          <Link to="/chat" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
+          <Link to="/" className="flex items-center gap-2.5 hover:opacity-80 transition-all">
             <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
               <MessageSquare className="w-5 h-5 text-primary" />
             </div>
@@ -72,6 +72,16 @@ const Navbar = () => {
             <Settings className="w-4 h-4" />
             <span className="hidden sm:inline">Settings</span>
           </Link>
+
+          {!user && (
+            <Link
+              to='/login'
+              className={`btn btn-sm gap-2 transition-colors`}
+            >
+              <UserPlus className='w-4 h-4' />
+              <span className='hidden sm:inline'>Login</span>
+            </Link>
+          )}
 
           {user && (
             <>

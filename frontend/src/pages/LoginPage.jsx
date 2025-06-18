@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink } from 'react-router-dom';
 import { authenticateUser } from '../features/authSlice';
+import AuthRight from '../components/AuthRight';
 
 const LoginPage = () => {
   const [userCredentials, setUserCredentials] = useState({
@@ -116,11 +117,8 @@ const LoginPage = () => {
         </div>
       </div>
 
-      {/* Right Side - Image/Pattern */}
-      {/* <AuthImagePattern
-        title={"Welcome back!"}
-        subtitle={"Sign in to continue your conversations and catch up with your messages."}
-      /> */}
+      {/* Right Side */}
+      <AuthRight />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Eye, EyeOff, Image, Loader2, Lock, Mail, MessageSquare, User } from 'lucide-react';
 import { authenticateUser } from '../features/authSlice.js';
 import toast from 'react-hot-toast';
+import AuthRight from '../components/AuthRight.jsx';
 
 
 const RegisterPage = () => {
@@ -211,11 +212,7 @@ const RegisterPage = () => {
       </div>
 
       {/* right side */}
-
-      {/* <AuthImagePattern
-        title="Join our community"
-        subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
-      /> */}
+      <AuthRight />
     </div>
   );
 };
